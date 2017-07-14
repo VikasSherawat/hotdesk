@@ -1,11 +1,5 @@
 from app.bot import BaseProcessor, BotProcessorFactory
-from splitwise import Splitwise
-from splitwise.expense import Expense
-from splitwise.user import ExpenseUser
-from splitwise.group import Group
-from splitwise.debt import Debt
 from datetime import datetime, timedelta
-from botsplitwise import BotSplitwise
 from botexception import BotException, LoginException
 from constants import BotConstants, ErrorMessages
 from flask import current_app as app
@@ -34,7 +28,7 @@ class SplitwiseBotProcessorFactory(BotProcessorFactory):
 
 #Define processors below
 
-class GreetingProcessor(SplitwiseProcessor):
+class GreetingProcessor(BaseProcessor):
 
     def __init__(self):
         pass
@@ -42,7 +36,7 @@ class GreetingProcessor(SplitwiseProcessor):
     def process(self, input):
         pass
 
-class RoomProcessor(SplitwiseProcessor):
+class RoomProcessor(BaseProcessor):
 
     def __init__(self):
         pass
@@ -50,7 +44,7 @@ class RoomProcessor(SplitwiseProcessor):
     def process(self, input):
         pass        
 
-class MeetingRoomProcessor(SplitwiseProcessor):
+class MeetingRoomProcessor(BaseProcessor):
 
     def __init__(self):
         pass

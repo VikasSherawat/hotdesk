@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, abort, request, redirect, url_for, session, current_app as app
-from model import User
+from model import Seats
 from botimpl import ChatBotController, FacebookMessenger
 import json
 from splitwise import Splitwise
@@ -94,3 +94,15 @@ def sendSeatsNotification():
         bot.messenger.send(senderId, ErrorMessages.GENERAL)
         app.logger.debug("Exception Occured "+str(e))
     return ('',204)
+
+@pages.route("/temp")
+def temp():
+
+    seat = Seats()
+    seat.building = 1
+    seat.floor = 2
+    seat.seatnum = 3
+    seat.save()
+    return "done"
+    
+

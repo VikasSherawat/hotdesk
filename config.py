@@ -1,5 +1,5 @@
 FLASK_SECRET_KEY = 'namana'
-DATABASE_URI = 'mysql+pymysql://root:@localhost:3306/hotdesk'
+DATABASE_URI = 'sqlite:///test.db'
 DEBUG = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 FACEBOOK_PAGE_ACCESS_TOKEN = ''

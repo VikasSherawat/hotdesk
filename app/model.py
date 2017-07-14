@@ -7,7 +7,7 @@ class Seats(db.Model):
     seatnum = db.Column(db.Integer, unique = True)
 
     def __repr__(self):
-        return '<User %r>' % self.user_id
+        return '<Seats %r>' % self.id
 
     def save(self):
         db.session.add(self)
