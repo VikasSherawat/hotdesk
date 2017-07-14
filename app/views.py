@@ -9,6 +9,7 @@ from  app.botimpl.constants import BotConstants, ErrorMessages
 import app.botimpl.allocation 
 import math
 from flask import jsonify
+import random
 
 
 pages = Blueprint('pages', __name__,template_folder='templates')
@@ -124,13 +125,20 @@ def sendSeatsNotification():
 
 @pages.route("/insert")
 def insert():
+    name = ["John","Haifen","Dan","Morres","Issac","Vikas","Bill","Ross","Chandler"]
+    team = ["API","Finance","Data"]
     for i in xrange(1,37):
         seat = Seats()
+        if i in [8,11,26,29]:
+            seat.user = random.choice(name)
+            seat.status = "allocated"
+            seat.teamname = random.choice(team)
         seat.building = 1
         seat.floor = 1
         seat.seatnum = i
         seat.row = i/6 if i%6==0 else i/6+1 
         seat.save()
+
     for i in xrange(1,7):
         room = Room()
         room.building = 1
@@ -178,7 +186,7 @@ def getSeats(team):
         print "Inside getSeats"
         print seats
         for seat in seats: 
-            seat = Seats.query.filter_by(user="0", row = seat.row).first()
+            seat = Seats.query.filter_by(user=None, row = seat.row).first()
             if seat:
                 return seat
 
