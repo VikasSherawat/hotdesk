@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, abort, request, redirect, url_for, session, current_app as app
 from model import Seats,Room
+from flask import Blueprint, render_template, abort, request, redirect, url_for, session, current_app as myapp
 from botimpl import ChatBotController, FacebookMessenger
 import json
 from splitwise import Splitwise
@@ -19,8 +19,19 @@ SPLITWISE_OAUTH_VERIFIER = "oauth_verifier"
 SPLITWISE_OAUTH_TOKEN_SECRET = "oauth_token_secret"
 
 
+users = {
+    "naman": {
+        "fb_id": "1401079726611959",
+        "name": "naman"
+    },
+    "rukmani": {
+        "fb_id": "1082466331854538",
+        "name": "rukmani"
+    }
+}
+
 def askUserToLogin(senderId):
-    messenger = FacebookMessenger(app.config['FACEBOOK_PAGE_ACCESS_TOKEN'],app.config['FACEBOOK_VERIFY_TOKEN'])
+    messenger = FacebookMessenger(myapp.config['FACEBOOK_PAGE_ACCESS_TOKEN'],myapp.config['FACEBOOK_VERIFY_TOKEN'])
     messenger.sendLoginLink(senderId)
 
 @pages.route("/")
@@ -32,7 +43,7 @@ def home():
 def facebookVerify():
 
     #Create a messenger object
-    messenger = FacebookMessenger(app.config['FACEBOOK_PAGE_ACCESS_TOKEN'],app.config['FACEBOOK_VERIFY_TOKEN'])
+    messenger = FacebookMessenger(myapp.config['FACEBOOK_PAGE_ACCESS_TOKEN'],myapp.config['FACEBOOK_VERIFY_TOKEN'])
 
     #Get the request parameters from facebook
     verify_token = request.args['hub.verify_token']
@@ -71,28 +82,30 @@ def facebookMessage():
         bot.parse(data)
     except LoginException as e:
         askUserToLogin(senderId)
-        app.logger.debug("Asking user to login")
+        myapp.logger.debug("Asking user to login")
     except BotException as e:
         bot.messenger.send(senderId, str(e))
-        app.logger.debug("BotException Occured " + str(e))
+        myapp.logger.debug("BotException Occured " + str(e))
     except Exception as e:
         bot.messenger.send(senderId, ErrorMessages.GENERAL)
-        app.logger.debug("Exception Occured "+str(e))
+        myapp.logger.debug("Exception Occured "+str(e))
     return ('',204)
 
 
-@pages.route("/notification", methods=['POST'])
+@pages.route("/api/book", methods=['POST'])
 def sendSeatsNotification():
-    bot = ''
-    senderId = ''
+    messenger = FacebookMessenger(myapp.config['FACEBOOK_PAGE_ACCESS_TOKEN'],myapp.config['FACEBOOK_VERIFY_TOKEN'])
+
+    data = json.loads(request.data)
+    print data
+    user = users[data["id"]]
     try:
-        data = json.loads(request.data)
-        senderId = FacebookMessenger.getSenderId(data)
-        seats = getSeats("personId")
-        bot.messenger.send(sendId, seats)
+        #seats = getSeats(user["team"])
+        seats = "You can goto seat 27A"
+        messenger.send(user["fb_id"], seats)
     except Exception as e:
-        bot.messenger.send(senderId, ErrorMessages.GENERAL)
-        app.logger.debug("Exception Occured "+str(e))
+        messenger.send(user["fb_id"], ErrorMessages.GENERAL)
+        myapp.logger.debug("Exception Occured "+str(e))
     return ('',204)
 
 @pages.route("/insert")
@@ -109,7 +122,7 @@ def insert():
         room.roomnum = i
         room.save()
     return "done"
-    
+
 
 @pages.route("/api/changeseatstatus",methods = ['POST'])
 def changeSetStatus():
