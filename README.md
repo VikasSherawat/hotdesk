@@ -1,6 +1,4 @@
-# splitwise-chatbot
-This is a chatbot for splitwise on messenger
-
+# hotdesk for hackathon
 
 # How to build
 pip install -r requirements.txt
