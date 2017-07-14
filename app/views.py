@@ -95,14 +95,14 @@ def sendSeatsNotification():
         app.logger.debug("Exception Occured "+str(e))
     return ('',204)
 
-@pages.route("/temp")
-def temp():
-
-    seat = Seats()
-    seat.building = 1
-    seat.floor = 2
-    seat.seatnum = 3
-    seat.save()
+@pages.route("/insert")
+def insert():
+    for i in xrange(1,37):
+        seat = Seats()
+        seat.building = 1
+        seat.floor = 1
+        seat.seatnum = i
+        seat.save()
     return "done"
     
 
