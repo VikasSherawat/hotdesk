@@ -58,13 +58,13 @@ class MeetingRoomProcessor(BaseProcessor):
         if roomid != "":
             return "Meeting room "+str(roomid)+" is booked from "+bookingtime+" to "+str(endtime)
         else:
-        #check if the room is free
-        output = "Following rooms are available at time "+bookingtime+"\n"
-        rooms = Room.query.all()
-        for room in rooms:
-            output += str(room.building)+ "."+str(room.floor)+"."+str(room.roomid)+"\n"
-        
-        return output
+            #check if the room is free
+            output = "Following rooms are available at time "+bookingtime+"\n"
+            rooms = Room.query.all()
+            for room in rooms:
+                output += str(room.building)+ "."+str(room.floor)+"."+str(room.roomid)+"\n"
+            
+            return output
         
 
     def getInputFromRequest(self, input, param, error=ErrorMessages.GENERAL, required=False):

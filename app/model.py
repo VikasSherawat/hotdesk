@@ -5,9 +5,10 @@ class Seats(db.Model):
     building = db.Column(db.Integer, unique = False)
     floor = db.Column(db.Integer, unique = False)
     seatnum = db.Column(db.Integer, unique = True)
-    user = db.Column(db.String(100), nullable = True)
+    user = db.Column(db.String(100), default="0", nullable = True)
     status = db.Column(db.String(25), default = 'Free', nullable = True)
     teamname = db.Column(db.String(25), nullable = True)
+    row = db.Column(db.Integer, unique = False)
 
     def __repr__(self):
         return '<Seat %r>' % self.id

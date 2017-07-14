@@ -7,6 +7,8 @@ import urllib
 from app.botimpl.botexception import BotException, LoginException
 from  app.botimpl.constants import BotConstants, ErrorMessages
 import app.botimpl.allocation 
+import math
+from flask import jsonify
 
 
 pages = Blueprint('pages', __name__,template_folder='templates')
@@ -19,16 +21,20 @@ SPLITWISE_OAUTH_VERIFIER = "oauth_verifier"
 SPLITWISE_OAUTH_TOKEN_SECRET = "oauth_token_secret"
 
 
-users = {
-    "naman": {
+users = [
+     {
         "fb_id": "1401079726611959",
-        "name": "naman"
+        "name": "naman",
+        "team": "API"
     },
-    "rukmani": {
+     {
         "fb_id": "1082466331854538",
-        "name": "rukmani"
+        "name": "rukmani",
+        "team": "Finance"
     }
-}
+]
+
+num = 1
 
 def askUserToLogin(senderId):
     messenger = FacebookMessenger(myapp.config['FACEBOOK_PAGE_ACCESS_TOKEN'],myapp.config['FACEBOOK_VERIFY_TOKEN'])
@@ -98,11 +104,19 @@ def sendSeatsNotification():
 
     data = json.loads(request.data)
     print data
-    user = users[data["id"]]
+    user = users[0]
     try:
-        #seats = getSeats(user["team"])
-        seats = "You can goto seat 27A"
-        messenger.send(user["fb_id"], seats)
+        seat = getSeats(user["team"])
+        seatmsg = "You can goto desk"
+        if not seat:
+            seatmsg += "1.2.18"
+        else:
+            seat.status = 'reserved'
+            seat.user = user["fb_id"]
+            seat.teamname = user["team"]
+            seat.save()
+            seatmsg += str(seat.building)+"."+str(seat.floor)+"."+str(seat.seatnum)
+        messenger.send(user["fb_id"], seatmsg)
     except Exception as e:
         messenger.send(user["fb_id"], ErrorMessages.GENERAL)
         myapp.logger.debug("Exception Occured "+str(e))
@@ -115,7 +129,9 @@ def insert():
         seat.building = 1
         seat.floor = 1
         seat.seatnum = i
+        seat.row = i/6 if i%6==0 else i/6+1 
         seat.save()
+    for i in xrange(1,7):
         room = Room()
         room.building = 1
         room.floor = 1
@@ -136,3 +152,59 @@ def changeSetStatus():
         return "status change"
     else:
         return "invalid seat number"
+
+def getSeats(team):
+    print "Team Name is "+team
+    seats = Seats.query.filter_by(teamname = team).order_by(Seats.row).all()
+    if not seats:
+        seats = Seats.query.all()
+        print "Number of record in seats "+str(len(seats))
+        for row in xrange(2,7):
+            #gives the first desk of an empty row
+            seat = Seats.query.filter_by(row = row).first()
+            if seat.status == "Free":
+                print "Inside First For Loop"
+                return seat
+        
+        #if all rows have some team-mates, it will give the first free desk in a row
+        for seat in seats:
+            if seat.row ==1:
+                continue
+
+            if seat.status == 'Free':
+                print "Inside 2nd For Loop"
+                return seat
+    else:
+        print "Inside getSeats"
+        print seats
+        for seat in seats: 
+            seat = Seats.query.filter_by(user="0", row = seat.row).first()
+            if seat:
+                return seat
+
+    return Seats.query.filter_by(seatnum=11).first()
+
+@pages.route("/findseat")
+def findseat():
+    num = 1
+    user = users[num]
+    try:
+        seat = getSeats(user["team"])
+        print "reached here"
+        seatmsg = "You can goto desk"
+        if not seat:
+            seatmsg += "1.2.18"
+        else:
+            seat.status = 'reserved'
+            seat.user = user["fb_id"]
+            seat.teamname = user["team"]
+            seat.save()
+            seatmsg += str(seat.building)+"."+str(seat.floor)+"."+str(seat.seatnum)
+    except Exception as e:
+        return "Exception Occured "+str(e)
+    return seatmsg
+
+@pages.route("/getallseats")
+def getAllSeats():
+    seats = Seats.query.all()
+    return jsonify(json_list = seats)
