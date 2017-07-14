@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from middleware import db, bcrypt, login_manager
+from middleware import db, bcrypt
 from views import pages
 from werkzeug.wsgi import DispatcherMiddleware
 
