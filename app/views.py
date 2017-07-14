@@ -24,7 +24,7 @@ SPLITWISE_OAUTH_TOKEN_SECRET = "oauth_token_secret"
 
 
 users = {
-  "namen":   {
+  "naman":   {
         "fb_id": "1401079726611959",
         "name": "naman",
         "team": "API"
@@ -114,11 +114,11 @@ def sendSeatsNotification():
         if not seat:
             seatmsg += "1.2.18"
         else:
-            seat.status = 'reserved'
+            seat.status = 'Reserved'
             seat.user = user["name"]
             seat.teamname = user["team"]
             seat.save()
-            seatmsg += str(seat.building)+"."+str(seat.floor)+"."+str(seat.seatnum)
+            seatmsg += str(seat.seatnum)
         messenger.send(user["fb_id"], seatmsg)
     except Exception as e:
         messenger.send(user["fb_id"], ErrorMessages.GENERAL)
@@ -207,10 +207,10 @@ def findseat():
             seatmsg += "1.2.18"
         else:
             seat.status = 'reserved'
-            seat.user = user["fb_id"]
+            seat.user = user["name"]
             seat.teamname = user["team"]
             seat.save()
-            seatmsg += str(seat.building)+"."+str(seat.floor)+"."+str(seat.seatnum)
+            seatmsg += str(seat.seatnum)
     except Exception as e:
         return "Exception Occured "+str(e)
     return seatmsg
@@ -222,7 +222,7 @@ def getAllSeats():
 
 
 @pages.route("/api/reserveseats",methods = ['POST'])
-def changeSetStatus():
+def reserveseats():
     data = json.loads(request.data)
     seats = data['seatList']
     for seatnum in seats:
