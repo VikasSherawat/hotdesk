@@ -4,6 +4,7 @@ from botexception import BotException, LoginException
 from constants import BotConstants, ErrorMessages
 from flask import current_app as app
 import random
+from app.model import Booking,Room
 
 class SplitwiseBotProcessorFactory(BotProcessorFactory):
     class ProcessorType(object):
@@ -50,8 +51,21 @@ class MeetingRoomProcessor(BaseProcessor):
         pass
 
     def process(self, input):
-        bookingtime = getInputFromRequest(input, "booking_time", ErrorMessages.BOOKING_TIME, True)
-        duration = getInputFromRequest(input, "num_time", ErrorMessages.DURATION, True)
+        bookingtime = getInputFromRequest(input, "num_time", ErrorMessages.BOOKING_TIME, True)
+        duration = getInputFromRequest(input, "duration", ErrorMessages.DURATION, True)
+        roomid = getInputFromRequest(input, "roomid")
+        endtime = int(bookingtime)+int(duration)
+        if roomid != "":
+            return "Meeting room "+str(roomid)+" is booked from "+bookingtime+" to "+str(endtime)
+        else:
+        #check if the room is free
+        output = "Following rooms are available at time "+bookingtime+"\n"
+        rooms = Room.query.all()
+        for room in rooms:
+            output += str(room.building)+ "."+str(room.floor)+"."+str(room.roomid)+"\n"
+        
+        return output
+        
 
     def getInputFromRequest(self, input, param, error=ErrorMessages.GENERAL, required=False):
 
