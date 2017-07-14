@@ -10,6 +10,7 @@ import app.botimpl.allocation
 import math
 from flask import jsonify
 import random
+import os
 
 
 pages = Blueprint('pages', __name__,template_folder='templates')
@@ -22,20 +23,21 @@ SPLITWISE_OAUTH_VERIFIER = "oauth_verifier"
 SPLITWISE_OAUTH_TOKEN_SECRET = "oauth_token_secret"
 
 
-users = [
-     {
+users = {
+  "namen":   {
         "fb_id": "1401079726611959",
         "name": "naman",
         "team": "API"
     },
-     {
+   "rukmani":  {
         "fb_id": "1082466331854538",
         "name": "rukmani",
         "team": "Finance"
     }
-]
+}
 
 num = 1
+
 
 def askUserToLogin(senderId):
     messenger = FacebookMessenger(myapp.config['FACEBOOK_PAGE_ACCESS_TOKEN'],myapp.config['FACEBOOK_VERIFY_TOKEN'])
@@ -105,7 +107,7 @@ def sendSeatsNotification():
 
     data = json.loads(request.data)
     print data
-    user = users[0]
+    user = users[data["id"]]
     try:
         seat = getSeats(user["team"])
         seatmsg = "You can goto desk"
@@ -113,7 +115,7 @@ def sendSeatsNotification():
             seatmsg += "1.2.18"
         else:
             seat.status = 'reserved'
-            seat.user = user["fb_id"]
+            seat.user = user["name"]
             seat.teamname = user["team"]
             seat.save()
             seatmsg += str(seat.building)+"."+str(seat.floor)+"."+str(seat.seatnum)
@@ -131,8 +133,9 @@ def insert():
         seat = Seats()
         if i in [8,11,26,29]:
             seat.user = random.choice(name)
-            seat.status = "allocated"
+            seat.status = "Allocated"
             seat.teamname = random.choice(team)
+
         seat.building = 1
         seat.floor = 1
         seat.seatnum = i
@@ -216,3 +219,18 @@ def findseat():
 def getAllSeats():
     seats = Seats.query.all()
     return jsonify(json_list = seats)
+
+
+@pages.route("/api/reserveseats",methods = ['POST'])
+def changeSetStatus():
+    data = json.loads(request.data)
+    seats = data['seatList']
+    for seatnum in seats:
+        seat = Seats.query.filter_by(seatnum=seatnum).first()
+    if seat:
+        seat.status = "Reserved"
+        seat.save()
+    else:
+        return "invalid seat number"
+
+    return "Status successfully changed"
