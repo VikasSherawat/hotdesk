@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, abort, request, redirect, url_for, session, current_app as app
-from model import Seats
+from model import Seats,Room
 from botimpl import ChatBotController, FacebookMessenger
 import json
 from splitwise import Splitwise
@@ -103,6 +103,23 @@ def insert():
         seat.floor = 1
         seat.seatnum = i
         seat.save()
+        room = Room()
+        room.building = 1
+        room.floor = 1
+        room.roomnum = i
+        room.save()
     return "done"
     
 
+@pages.route("/api/changeseatstatus",methods = ['POST'])
+def changeSetStatus():
+    data = json.loads(request.data)
+    seatnum = data['seatnum']
+    status = data['status']
+    seat = Seats.query.filter_by(seatnum=seatnum).first()
+    if seat:
+        seat.status = status
+        seat.save()
+        return "status change"
+    else:
+        return "invalid seat number"

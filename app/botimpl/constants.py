@@ -54,6 +54,9 @@ class ErrorMessages(object):
 
     NAME = "Please enter the name of the person"
     SPLIT = "Please enter whether you paid or owe"
+    DURATION = "Please enter for how long you want to book meeting room"
+    AMPM = "Please enter whether AM or PM"
+    BOOKING_TIME = "Please enter at what time you want to book meeting room"
     WRONG_SPLIT = "Wrong value of Split, please use either 'paid', 'owe' or 'equally'"
     GENERAL = "Sorry, some error has occured. Please try again. "
     NO_FRIEND = "You don't have any friend named {name}"

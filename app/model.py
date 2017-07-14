@@ -6,7 +6,7 @@ class Seats(db.Model):
     floor = db.Column(db.Integer, unique = False)
     seatnum = db.Column(db.Integer, unique = True)
     user = db.Column(db.String(100), nullable = True)
-    status = db.Column(db.String(25),nullable = True)
+    status = db.Column(db.String(25), default = 'Free', nullable = True)
 
     def __repr__(self):
         return '<Seat %r>' % self.id
@@ -21,7 +21,7 @@ class Room(db.Model):
     building = db.Column(db.Integer, unique = False)
     floor = db.Column(db.Integer, unique = False)
     roomnum = db.Column(db.Integer, unique = True)
-    bookings = db.relationship('Booking', backref='user',lazy='dynamic')
+    bookings = db.relationship('Booking', backref='Room',lazy='dynamic')
 
     def __repr__(self):
         return '<Room %r>' % self.id

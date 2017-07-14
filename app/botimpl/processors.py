@@ -50,4 +50,27 @@ class MeetingRoomProcessor(BaseProcessor):
         pass
 
     def process(self, input):
-        pass
+        bookingtime = getInputFromRequest(input, "booking_time", ErrorMessages.BOOKING_TIME, True)
+        duration = getInputFromRequest(input, "num_time", ErrorMessages.DURATION, True)
+
+    def getInputFromRequest(self, input, param, error=ErrorMessages.GENERAL, required=False):
+
+        if BotConstants.RESULT in input:
+
+            result = input[BotConstants.RESULT]
+
+            if BotConstants.PARAMETERS in result:
+
+                parameters = result[BotConstants.PARAMETERS]
+
+                param_value = ''
+                if param in parameters:
+                    param_value = parameters[param]
+
+                if param_value is not None and (param_value == "" or len(str(param_value)) == 0) and required:
+                    raise BotException(error)
+
+                return param_value
+
+        if not required:
+            raise BotException(error)
