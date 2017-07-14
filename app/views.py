@@ -26,12 +26,12 @@ SPLITWISE_OAUTH_TOKEN_SECRET = "oauth_token_secret"
 users = {
   "naman":   {
         "fb_id": "1401079726611959",
-        "name": "naman",
+        "name": "Naman",
         "team": "API"
     },
    "rukmani":  {
         "fb_id": "1082466331854538",
-        "name": "rukmani",
+        "name": "Rukmani",
         "team": "Finance"
     }
 }
@@ -224,6 +224,7 @@ def getAllSeats():
         obj["id"] = seat.id
         obj["user"] = seat.user
         obj["status"] = seat.status
+        obj["teamname"] = seat.teamname
         seatsRes.append(obj)
 
     return json.dumps(seatsRes), {'Content-type':'application/json'}
