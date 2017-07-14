@@ -215,10 +215,18 @@ def findseat():
         return "Exception Occured "+str(e)
     return seatmsg
 
-@pages.route("/getallseats")
+@pages.route("/api/seats",methods=['GET'])
 def getAllSeats():
     seats = Seats.query.all()
-    return jsonify(json_list = seats)
+    seatsRes= []
+    for seat in seats:
+        obj= {}
+        obj["id"] = seat.id
+        obj["user"] = seat.user
+        obj["status"] = seat.status
+        seatsRes.append(obj)
+
+    return json.dumps(seatsRes), {'Content-type':'application/json'}
 
 
 @pages.route("/api/reserveseats",methods = ['POST'])

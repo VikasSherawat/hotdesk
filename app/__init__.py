@@ -3,8 +3,11 @@ from flask import Flask
 from middleware import db, bcrypt
 from views import pages
 from werkzeug.wsgi import DispatcherMiddleware
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__, instance_relative_config=True)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 app.config.from_object('config')
 
 if os.path.exists("instance/config.py"):

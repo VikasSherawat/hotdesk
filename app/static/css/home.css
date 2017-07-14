@@ -1,0 +1,22 @@
+body{
+    font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
+}
+
+.top-bar{
+    font-size: 1.2em;
+
+    padding: 1.2% 2%;
+    background-color: #2A3F54;
+    color:#ECF0F1;
+
+}
+
+.menu{
+    text-align: right;
+}
+
+.menu img{
+    width: 4%;
+    margin-right: 20px;
+    margin-top: -6px;
+}
