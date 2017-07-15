@@ -56,6 +56,7 @@ class ErrorMessages(object):
     SPLIT = "Please enter whether you paid or owe"
     DURATION = "Please enter for how long you want to book meeting room"
     AMPM = "Please enter whether AM or PM"
+    NAME = "Please enter the name of person you want to search"
     BOOKING_TIME = "Please enter at what time you want to book meeting room"
     WRONG_SPLIT = "Wrong value of Split, please use either 'paid', 'owe' or 'equally'"
     GENERAL = "Sorry, some error has occured. Please try again. "

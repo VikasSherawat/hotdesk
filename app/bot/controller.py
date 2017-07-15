@@ -7,14 +7,16 @@ class BotController(object):
         self.messenger = messenger
 
     def parse(self,request):
+        seatnum = request["seatnum"]
         #NLP
         request = self.beforeConvert(request)
         action, structuredData = self.converter.convert(request)
 
         #GenerateResponse
         action, structuredData = self.beforeProcess(action,structuredData)
-        if action == "seat":
-            structuredData["seatnum"] = request["seatnum"]
+        if action == 'seat':
+            structuredData["seatnum"] = seatnum
+
         processor = self.processorFactory.getProcessor(action)
         response = processor.process(structuredData)
         

@@ -12,6 +12,8 @@ from flask import jsonify
 import random
 import os
 
+import sys, traceback
+
 
 pages = Blueprint('pages', __name__,template_folder='templates')
 
@@ -24,12 +26,12 @@ SPLITWISE_OAUTH_TOKEN_SECRET = "oauth_token_secret"
 
 
 users = {
-  "naman":   {
+  "Naman":   {
         "fb_id": "1401079726611959",
         "name": "Naman",
         "team": "API"
     },
-   "rukmani":  {
+   "Rukmani":  {
         "fb_id": "1082466331854538",
         "name": "Rukmani",
         "team": "Finance"
@@ -92,14 +94,14 @@ def checkFirstTimeLogin(data):
 
 @pages.route("/messenger", methods=['POST'])
 def facebookMessage():
-    bot = ''
     senderId = ''
     try:
         data = json.loads(request.data)
         senderId = FacebookMessenger.getSenderId(data)
-        name = users_by_id[senderId]["name"]
-        data["seatnum"] = getseatbyuser(name)
         bot = ChatBotController(senderId)
+        name = users_by_id[senderId]["name"]
+        print name
+        data["seatnum"] = getseatbyuser(name)
         #if checkFirstTimeLogin(data):
         #    bot.messenger.send(senderId, BotConstants.LOGIN_SUCCESS)
         #    return ('', 204)
@@ -110,9 +112,12 @@ def facebookMessage():
     except BotException as e:
         bot.messenger.send(senderId, str(e))
         myapp.logger.debug("BotException Occured " + str(e))
+        traceback.print_exc(file=sys.stdout)
     except Exception as e:
         bot.messenger.send(senderId, ErrorMessages.GENERAL)
         myapp.logger.debug("Exception Occured "+str(e))
+        traceback.print_exc(file=sys.stdout)
+
     return ('',204)
 
 
@@ -274,8 +279,7 @@ def searchseatbyuser():
     return getseatbyuser(name)
 
 def getseatbyuser(name):
-    for seatnum in seats:
-        seat = Seats.query.filter_by(user=name).first()
+    seat = Seats.query.filter_by(user=name).first()
     if seat:
         return seat.seatnum
     else:
