@@ -36,6 +36,19 @@ users = {
     }
 }
 
+users_by_id = {
+  "1401079726611959":   {
+        "fb_id": "1401079726611959",
+        "name": "Naman",
+        "team": "API"
+    },
+   "1082466331854538":  {
+        "fb_id": "1082466331854538",
+        "name": "Rukmani",
+        "team": "Finance"
+    }
+}
+
 num = 1
 
 
@@ -84,10 +97,12 @@ def facebookMessage():
     try:
         data = json.loads(request.data)
         senderId = FacebookMessenger.getSenderId(data)
+        name = users_by_id[senderId]["name"]
+        data["seatnum"] = getseatbyuser(name)
         bot = ChatBotController(senderId)
-        if checkFirstTimeLogin(data):
-            bot.messenger.send(senderId, BotConstants.LOGIN_SUCCESS)
-            return ('', 204)
+        #if checkFirstTimeLogin(data):
+        #    bot.messenger.send(senderId, BotConstants.LOGIN_SUCCESS)
+        #    return ('', 204)
         bot.parse(data)
     except LoginException as e:
         askUserToLogin(senderId)
@@ -250,3 +265,18 @@ def reserveseats():
         return "invalid seat number"
 
     return "Status successfully changed"
+
+
+@pages.route("/api/search",methods = ['POST'])
+def searchseatbyuser():
+    data = json.loads(request.data)
+    name = data['name']
+    return getseatbyuser(name)
+
+def getseatbyuser(name):
+    for seatnum in seats:
+        seat = Seats.query.filter_by(user=name).first()
+    if seat:
+        return seat.seatnum
+    else:
+        return 0

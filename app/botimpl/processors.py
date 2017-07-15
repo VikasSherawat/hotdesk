@@ -4,14 +4,14 @@ from botexception import BotException, LoginException
 from constants import BotConstants, ErrorMessages
 from flask import current_app as app
 import random
-from app.model import Booking,Room
+from app.model import Booking,Room,Seats
 
 class SplitwiseBotProcessorFactory(BotProcessorFactory):
     class ProcessorType(object):
         '''
         Processor Type
         '''
-        ROOM_PROCESSOR = 'room'
+        SEAT_PROCESSOR = 'seat'
         MEETING_PROCESSOR = 'meeting'
         HELP_PROCESSOR = "help"
 
@@ -20,12 +20,12 @@ class SplitwiseBotProcessorFactory(BotProcessorFactory):
 
     def getProcessor(self, action):
 
-        if action == SplitwiseBotProcessorFactory.ProcessorType.ROOM_PROCESSOR:
-            return RoomProcessor()
+        if action == SplitwiseBotProcessorFactory.ProcessorType.SEAT_PROCESSOR:
+            return SeatProcessor()
         elif action == SplitwiseBotProcessorFactory.ProcessorType.MEETING_PROCESSOR:
             return MeetingRoomProcessor()
         else:
-            return UnknownProcessor()
+            return MeetingRoomProcessor()
 
 #Define processors below
 
@@ -37,13 +37,27 @@ class GreetingProcessor(BaseProcessor):
     def process(self, input):
         pass
 
-class RoomProcessor(BaseProcessor):
+class SeatProcessor(BaseProcessor):
 
     def __init__(self):
         pass
 
     def process(self, input):
-        pass        
+        bookingtime = getInputFromRequest(input, "num_time", ErrorMessages.BOOKING_TIME, True)
+        if bookingtime == "":
+            bookingtime = 1
+        seatnum = input["seatnum"]
+        if seatnum == 0:
+             return ErrorMessages.GENERAL
+
+        seat = Seats.query.filter_by(id = seatnum).first()
+        if seat:
+            seat.status = "Reserved"
+            seat.save()
+            return "Seat "+str(seatnum)+" is successfully reserved for next "+str(bookingtime)+" hours"
+        else:
+            return ErrorMessages.GENERAL
+              
 
 class MeetingRoomProcessor(BaseProcessor):
 
@@ -89,7 +103,7 @@ class MeetingRoomProcessor(BaseProcessor):
         if not required:
             raise BotException(error)
 
-class GreetingProcessor(BaseProcessor):
+class UnknownProcessor(BaseProcessor):
 
     def __init__(self):
         pass

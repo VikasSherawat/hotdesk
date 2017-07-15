@@ -13,6 +13,8 @@ class BotController(object):
 
         #GenerateResponse
         action, structuredData = self.beforeProcess(action,structuredData)
+        if action == "seat":
+            structuredData["seatnum"] = request["seatnum"]
         processor = self.processorFactory.getProcessor(action)
         response = processor.process(structuredData)
         
