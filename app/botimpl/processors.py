@@ -95,8 +95,21 @@ class MeetingRoomProcessor(MyProcessor):
         duration = self.getInputFromRequest(input, "duration", ErrorMessages.DURATION, True)
         roomid = self.getInputFromRequest(input, "roomid")
         endtime = int(bookingtime)+int(duration)
+
+        booking_time = str(int(bookingtime)-12 if int(bookingtime)> 12 else int(bookingtime))
+        if bookingtime > 12:
+            booking_time += " pm"
+        else:
+            booking_time += " am"
+
+        end_time = str(int(endtime)-12 if int(endtime)> 12 else int(endtime))
+        if endtime > 12:
+            end_time += " pm"
+        else:
+            end_time += " am"
+
         if roomid != "":
-            return "Meeting room "+str(roomid)+" is booked from "+bookingtime+" to "+str(endtime)
+            return "Meeting room "+str(roomid)+" is booked from "+booking_time+" to "+str(end_time)
         else:
             #check if the room is free
             booking_time = str(int(bookingtime)-12 if int(bookingtime)> 12 else int(bookingtime))
