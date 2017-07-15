@@ -131,13 +131,17 @@ def sendSeatsNotification():
 @pages.route("/insert")
 def insert():
     name = ["John","Haifen","Dan","Morres","Issac","Vikas","Bill","Ross","Chandler"]
-    team = ["API","Finance","Data"]
+    team = ["API","Finance"]
     for i in xrange(1,37):
         seat = Seats()
-        if i in [8,11,26,29]:
+        if i in [1,5]:
             seat.user = random.choice(name)
             seat.status = "Allocated"
-            seat.teamname = random.choice(team)
+            seat.teamname = team[0]
+        if i in [10]:
+            seat.user = random.choice(name)
+            seat.status = "Allocated"
+            seat.teamname = team[1]
 
         seat.building = 1
         seat.floor = 1
@@ -208,7 +212,7 @@ def findseat():
     try:
         seat = getSeats(user["team"])
         print "reached here"
-        seatmsg = "You can goto desk"
+        seatmsg = "You can goto desk "
         if not seat:
             seatmsg += "1.2.18"
         else:
