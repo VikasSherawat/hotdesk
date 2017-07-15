@@ -45,6 +45,9 @@ def askUserToLogin(senderId):
 
 @pages.route("/")
 def home():
+    if not os.path.exists('test.db'):
+        print "inserting rows"
+        insert()
     return render_template("home.html")
 
 
@@ -200,7 +203,7 @@ def getSeats(team):
 
 @pages.route("/findseat")
 def findseat():
-    num = "naman"
+    num = "rukmani"
     user = users[num]
     try:
         seat = getSeats(user["team"])
@@ -209,7 +212,7 @@ def findseat():
         if not seat:
             seatmsg += "1.2.18"
         else:
-            seat.status = 'reserved'
+            seat.status = 'Reserved'
             seat.user = user["name"]
             seat.teamname = user["team"]
             seat.save()
