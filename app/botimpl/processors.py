@@ -88,3 +88,11 @@ class MeetingRoomProcessor(BaseProcessor):
 
         if not required:
             raise BotException(error)
+
+class GreetingProcessor(BaseProcessor):
+
+    def __init__(self):
+        pass
+
+    def process(self, input):
+        pass

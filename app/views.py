@@ -113,7 +113,7 @@ def sendSeatsNotification():
     user = users[data["id"]]
     try:
         seat = getSeats(user["team"])
-        seatmsg = "You can goto desk"
+        seatmsg = "You can goto desk "
         if not seat:
             seatmsg += "1.2.18"
         else:
