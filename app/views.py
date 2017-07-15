@@ -139,7 +139,7 @@ def insert():
         seat.building = 1
         seat.floor = 1
         seat.seatnum = i
-        seat.row = i/6 if i%6==0 else i/6+1 
+        seat.row = i/9 if i%9==0 else i/9+1 
         seat.save()
 
     for i in xrange(1,7):
@@ -170,10 +170,10 @@ def getSeats(team):
     if not seats:
         seats = Seats.query.all()
         print "Number of record in seats "+str(len(seats))
-        for row in xrange(2,7):
+        for row in xrange(1,4):
             #gives the first desk of an empty row
             seat = Seats.query.filter_by(row = row).first()
-            if seat.status == "Free":
+            if seat.status == "Free" or seat.user == None:
                 print "Inside First For Loop"
                 return seat
         
@@ -192,12 +192,15 @@ def getSeats(team):
             seat = Seats.query.filter_by(user=None, row = seat.row).first()
             if seat:
                 return seat
+        seat = Seats.query.filter_by(user=None).first()
+        if seat:
+            return seat
 
     return Seats.query.filter_by(seatnum=11).first()
 
 @pages.route("/findseat")
 def findseat():
-    num = 1
+    num = "naman"
     user = users[num]
     try:
         seat = getSeats(user["team"])
