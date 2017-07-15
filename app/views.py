@@ -45,9 +45,6 @@ def askUserToLogin(senderId):
 
 @pages.route("/")
 def home():
-    if not os.path.exists('test.db'):
-        print "inserting rows"
-        insert()
     return render_template("home.html")
 
 
